@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.Stack;
 
-
 public class Postfix {
 	private ArrayList<String> postfix;
 	
@@ -77,9 +76,11 @@ public class Postfix {
 	}
 	
 	public static void main(String[] args){
-		Postfix p = new Postfix("(hola,lol)*");
-		for(int i=0; i<p.postfix.size(); i++){
-			System.out.println(p.postfix.get(i));
-		}
+//		Postfix p = new Postfix("(hola,lol)*");
+//		for(int i=0; i<p.postfix.size(); i++){
+//			System.out.println(p.postfix.get(i));
+//		}
+		
+		new AFNE("hola");
 	}
 }

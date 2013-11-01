@@ -1,12 +1,6 @@
-package automata;
-
 import java.io.File;
+
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 
 public class GUI extends javax.swing.JFrame {
     Automata a;
