@@ -75,12 +75,9 @@ public class Postfix {
 			|| operator.equals(")");
 	}
 	
-	public static void main(String[] args){
-//		Postfix p = new Postfix("(hola,lol)*");
-//		for(int i=0; i<p.postfix.size(); i++){
-//			System.out.println(p.postfix.get(i));
-//		}
-		
-		new AFNE("hola");
+	public static void main(String[] args) throws Exception{
+		Postfix p = new Postfix("(hola,lol)*");
+		AFNE a = new AFNE(p);
+		System.out.println(a);
 	}
 }
