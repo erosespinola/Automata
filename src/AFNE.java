@@ -3,7 +3,8 @@ import java.util.Stack;
 
 
 public class AFNE {
-	private static final int NSYMBOLS = 60;
+	private static final int NSYMBOLS = 59;
+	public static final char LAMBDA = '~';
 
 	private ArrayList<ArrayList<Integer>[]> G;
 	private ArrayList<Boolean> finals;
@@ -35,7 +36,7 @@ public class AFNE {
 			finals.add(false);			
 			c = word.charAt(i);
 
-			G.get(previous)[convert(c)].add(current);
+			addTransition(previous, current, c);
 			previous = current;
 		}
 
@@ -50,7 +51,7 @@ public class AFNE {
 		mergeTables(operand);
 		for (int i = 0; i < finals.size(); i++) {
 			if (finals.get(i)) {
-				G.get(i)[convert('~')].add(operand.initialState);
+				addTransition(i, operand.initialState, LAMBDA);
 				finals.set(i, false);
 			}
 		}
@@ -66,8 +67,9 @@ public class AFNE {
 		int newInitialState = addState();
 		finals.add(false);
 
-		G.get(newInitialState)[convert('~')].add(initialState);
-		G.get(newInitialState)[convert('~')].add(operand.initialState);
+		addTransition(newInitialState, initialState, LAMBDA);
+		addTransition(newInitialState, operand.initialState, LAMBDA);
+		
 		initialState = newInitialState;
 
 		int newFinalState = addState();
@@ -75,7 +77,7 @@ public class AFNE {
 
 		for (int i = 0; i < finals.size() - 1; i++) {
 			if (finals.get(i)) {
-				G.get(i)[convert('~')].add(newFinalState);
+				addTransition(i, newFinalState, LAMBDA);
 				finals.set(i, false);
 			}
 		}
@@ -89,14 +91,13 @@ public class AFNE {
 		finals.add(false);
 		finals.add(true);
 
-		G.get(newInitialState)[convert('~')].add(newFinalState);
-		G.get(newInitialState)[convert('~')].add(initialState);
-
+		addTransition(newInitialState, newFinalState, LAMBDA);
+		addTransition(newInitialState, initialState, LAMBDA);
 
 		for (int i = 0; i < finals.size() - 1; i++) {
 			if (finals.get(i)) {
-				G.get(i)[convert('~')].add(initialState);
-				G.get(i)[convert('~')].add(newFinalState);
+				addTransition(i, initialState, LAMBDA);
+				addTransition(i, newFinalState, LAMBDA);
 				finals.set(i, false);
 			}
 		}
@@ -112,23 +113,18 @@ public class AFNE {
 		finals.add(false);
 		finals.add(true);
 
-		G.get(newInitialState)[convert('~')].add(initialState);
-
+		addTransition(newInitialState, initialState, LAMBDA);
 
 		for (int i = 0; i < finals.size() - 1; i++) {
 			if (finals.get(i)) {
-				G.get(i)[convert('~')].add(initialState);
-				G.get(i)[convert('~')].add(newFinalState);
+				addTransition(i, initialState, LAMBDA);
+				addTransition(i, newFinalState, LAMBDA);
 				finals.set(i, false);
 			}
 		}
 
 		initialState = newInitialState;
 		return this;
-	}
-
-	private void concatenateString(String s) {
-
 	}
 
 	private int addState() {
@@ -174,39 +170,38 @@ public class AFNE {
 			}
 		}
 
-		for (int i = 0; i < operands.size() - 1; i++) {
-			operands.push(operands.pop().concatenate(operands.pop()));
+		AFNE[] remaining = new AFNE[operands.size()];
+		operands.copyInto(remaining);
+		op1 = remaining[0];
+		for (int i = 1; i < remaining.length; i++) {
+			op1.concatenate(remaining[i]);
 		}
 
-		this.G = operands.peek().G;
-		this.finals = operands.peek().finals;
-		this.initialState = operands.peek().initialState;
+		this.G = op1.G;
+		this.finals = op1.finals;
+		this.initialState = op1.initialState;
 	}
 
 	private int convert(char c) {
-		if (c == '.') {
+		if (c == LAMBDA) {
 			return NSYMBOLS - 1;
-		}
-		else if (c == '~') {
-			return NSYMBOLS - 2;
 		}
 		else {
 			return c - 'A';
 		}
 	}
 
-	private char revert(int c) {
-		if (c == 51) {
-			return '.';
-		}
-		else if (c == 52) {
-			return '~';
+	private void addTransition(int source, int destination, char symbol) {
+		if (symbol == '.') {
+			for (char current = 'A'; current <= 'z'; current++) {
+				G.get(source)[convert(current)].add(destination);
+			}
 		}
 		else {
-			return (char)(c + 'A');
+			G.get(source)[convert(symbol)].add(destination);
 		}
 	}
-
+	
 	private boolean isOperator(String operator){
 		return operator.equals("+") 
 				|| operator.equals("*")
@@ -242,7 +237,7 @@ public class AFNE {
 		for (char current = 'A'; current <= 'z'; current++) {
 			output += current + " ";
 		}
-		output += "~ .\n";
+		output += LAMBDA + "\n";
 
 		for (ArrayList<Integer>[] row : G) {
 			if(finals.get(i)){

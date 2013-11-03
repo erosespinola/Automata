@@ -27,7 +27,7 @@ public class Postfix {
 				}
 				if(actualChar == '('){
 					if(entry.charAt(i+1)=='.' && entry.charAt(i+2)==')'){
-						list.add("(.)");
+						list.add(".");
 						i = i + 2;
 						continue;
 					}
@@ -35,6 +35,11 @@ public class Postfix {
 				list.add(String.valueOf(actualChar));
 			}
 		}
+		
+		if (token != "") {
+			list.add(String.valueOf(token));
+		}
+		
 		return list;
 	}
 	
@@ -75,8 +80,20 @@ public class Postfix {
 			|| operator.equals(")");
 	}
 	
+	@Override
+	public String toString() {
+		String s = "";
+		
+		for (String token : postfix) {
+			s += token + " ";
+		}
+		
+		return s;
+	}
+	
 	public static void main(String[] args) throws Exception{
-		Postfix p = new Postfix("(hola,lol)*");
+		Postfix p = new Postfix("(padre,~)(.)+www(.)+com");
+		System.out.println(p);
 		AFNE a = new AFNE(p);
 		System.out.println(a);
 	}
