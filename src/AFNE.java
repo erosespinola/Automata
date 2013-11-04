@@ -1,17 +1,38 @@
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Scanner;
 import java.util.Stack;
 
-
 public class AFNE {
-	private static final int NSYMBOLS = 59;
-	public static final char LAMBDA = '~';
-
+	private static int NSYMBOLS = 0;
+	private static boolean HASLOADEDDICT = false;
+	private static HashMap<String, Integer> symbols;
+	private static HashMap<Integer, String> inverseIndex;
+	
+	public static final char EPSILON = '~';
+	
 	private ArrayList<ArrayList<Integer>[]> G;
 	private ArrayList<Boolean> finals;
 
 	private int initialState;
 
-	public AFNE() {
+	public AFNE() throws FileNotFoundException {
+		if (!HASLOADEDDICT) {
+			HASLOADEDDICT = true;
+			Scanner dictFile = new Scanner(new FileReader("symbols.txt"));
+			symbols = new HashMap<String, Integer>();
+			inverseIndex = new HashMap<Integer, String>();
+			
+			for (String symbol : dictFile.nextLine().split(",")) {
+				symbols.put(symbol, NSYMBOLS);
+				inverseIndex.put(NSYMBOLS, symbol);
+				NSYMBOLS++;
+			}
+		}
+		
 		finals = new ArrayList<Boolean>();
 		G = new ArrayList<ArrayList<Integer>[]>();
 	}
@@ -22,7 +43,7 @@ public class AFNE {
 		evaluatePostfix(expression);
 	}
 
-	public AFNE(String word) {
+	public AFNE(String word) throws FileNotFoundException {
 		this();
 
 		int current, previous;
@@ -51,7 +72,7 @@ public class AFNE {
 		mergeTables(operand);
 		for (int i = 0; i < finals.size(); i++) {
 			if (finals.get(i)) {
-				addTransition(i, operand.initialState, LAMBDA);
+				addTransition(i, operand.initialState, EPSILON);
 				finals.set(i, false);
 			}
 		}
@@ -67,8 +88,8 @@ public class AFNE {
 		int newInitialState = addState();
 		finals.add(false);
 
-		addTransition(newInitialState, initialState, LAMBDA);
-		addTransition(newInitialState, operand.initialState, LAMBDA);
+		addTransition(newInitialState, initialState, EPSILON);
+		addTransition(newInitialState, operand.initialState, EPSILON);
 		
 		initialState = newInitialState;
 
@@ -77,27 +98,27 @@ public class AFNE {
 
 		for (int i = 0; i < finals.size() - 1; i++) {
 			if (finals.get(i)) {
-				addTransition(i, newFinalState, LAMBDA);
+				addTransition(i, newFinalState, EPSILON);
 				finals.set(i, false);
 			}
 		}
 		return this;
 	}
 
-	public AFNE kleenClausure() {
+	public AFNE kleenClosure() {
 		int newInitialState = addState();
 		int newFinalState = addState();
 
 		finals.add(false);
 		finals.add(true);
 
-		addTransition(newInitialState, newFinalState, LAMBDA);
-		addTransition(newInitialState, initialState, LAMBDA);
+		addTransition(newInitialState, newFinalState, EPSILON);
+		addTransition(newInitialState, initialState, EPSILON);
 
 		for (int i = 0; i < finals.size() - 1; i++) {
 			if (finals.get(i)) {
-				addTransition(i, initialState, LAMBDA);
-				addTransition(i, newFinalState, LAMBDA);
+				addTransition(i, initialState, EPSILON);
+				addTransition(i, newFinalState, EPSILON);
 				finals.set(i, false);
 			}
 		}
@@ -106,19 +127,19 @@ public class AFNE {
 		return this;
 	}
 
-	public AFNE positiveClausure() {
+	public AFNE positiveClosure() {
 		int newInitialState = addState();
 		int newFinalState = addState();
 
 		finals.add(false);
 		finals.add(true);
 
-		addTransition(newInitialState, initialState, LAMBDA);
+		addTransition(newInitialState, initialState, EPSILON);
 
 		for (int i = 0; i < finals.size() - 1; i++) {
 			if (finals.get(i)) {
-				addTransition(i, initialState, LAMBDA);
-				addTransition(i, newFinalState, LAMBDA);
+				addTransition(i, initialState, EPSILON);
+				addTransition(i, newFinalState, EPSILON);
 				finals.set(i, false);
 			}
 		}
@@ -153,11 +174,11 @@ public class AFNE {
 					break;
 				case "+":
 					op1 = operands.pop();
-					op1.positiveClausure();
+					op1.positiveClosure();
 					break;
 				case "*":
 					op1 = operands.pop();
-					op1.kleenClausure();
+					op1.kleenClosure();
 					break;
 				default:
 					throw new Exception("Something went wrong");
@@ -182,19 +203,20 @@ public class AFNE {
 		this.initialState = op1.initialState;
 	}
 
+	private int convert(String c) {
+		return symbols.get(c);
+	}
+	
 	private int convert(char c) {
-		if (c == LAMBDA) {
-			return NSYMBOLS - 1;
-		}
-		else {
-			return c - 'A';
-		}
+		return symbols.get(String.valueOf(c));
 	}
 
 	private void addTransition(int source, int destination, char symbol) {
 		if (symbol == '.') {
-			for (char current = 'A'; current <= 'z'; current++) {
-				G.get(source)[convert(current)].add(destination);
+			for (String current : symbols.keySet()) {
+				if (!current.equals(String.valueOf(EPSILON))) {
+					G.get(source)[convert(current)].add(destination);
+				}
 			}
 		}
 		else {
@@ -228,16 +250,32 @@ public class AFNE {
 			}
 		}
 	}
+	
+	private HashSet<Integer> epsilonClosure(int state) {
+		HashSet<Integer> states = new HashSet<Integer>();
+		epsilonClosure(state, states);
+		return states;
+	}
+	
+	private void epsilonClosure(int state, HashSet<Integer> states) {
+		states.add(state);
+		
+		for (int child : G.get(state)[convert(EPSILON)]) {
+			if (!states.contains(child)) {
+				epsilonClosure(child, states);
+			}
+		}
+	}
 
 	@Override
 	public String toString() {
 		String output = "   ";
 		int i = 0;
 
-		for (char current = 'A'; current <= 'z'; current++) {
-			output += current + " ";
+		for (int j = 0; j < NSYMBOLS; j++) {
+			output += inverseIndex.get(j) + " ";
 		}
-		output += LAMBDA + "\n";
+		output += "\n";
 
 		for (ArrayList<Integer>[] row : G) {
 			if(finals.get(i)){
@@ -261,17 +299,29 @@ public class AFNE {
 
 		return output;
 	}
+	
+	public boolean accepted(String input) {
+		return accepted(input, initialState, 0, "");
+	}
 
-	//	public boolean accepted(String input, int current, int i) {
-	//		boolean a = false;
-	//
-	//		if (i == input.length()) {
-	//			return finals[current];
-	//		} else {
-	//			for (int child : G[current][symbols.get(input.charAt(i) + "")]) {
-	//				a |= accepted(input, child, i + 1);
-	//			}
-	//			return a;
-	//		}
-	//	}
+	private boolean accepted(String input, int current, int i, String currentString) {
+		boolean a = false;
+
+		if (i == input.length()) {
+			if (finals.get(current)) {
+				System.out.println("Accepted: " + currentString);
+				return true;
+			}
+			else {
+				return false;
+			}
+		} else {
+			for (int state : epsilonClosure(current)) {
+				for (int child : G.get(state)[convert(input.charAt(i))]) {
+					a |= accepted(input, child, i + 1, currentString + input.charAt(i));
+				}
+			}
+			return a;
+		}
+	}
 }

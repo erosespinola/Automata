@@ -17,7 +17,7 @@ public class Postfix {
 		String token = "";
 		for(int i=0; i<entry.length(); i++){
 			char actualChar = entry.charAt(i);
-			if(Character.isAlphabetic(actualChar) || actualChar == '.'){
+			if(Character.isAlphabetic(actualChar)){
 				token += String.valueOf(actualChar);
 			}
 			else {
@@ -32,7 +32,14 @@ public class Postfix {
 						continue;
 					}
 				}
+				
 				list.add(String.valueOf(actualChar));
+				
+				if (actualChar == '(' && entry.charAt(i+1) == ',' ||
+					actualChar == ',' && entry.charAt(i+1) == ',' ||
+					actualChar == ',' && entry.charAt(i+1) == ')') {
+					list.add(String.valueOf(AFNE.EPSILON));
+				}
 			}
 		}
 		
@@ -61,7 +68,7 @@ public class Postfix {
 				operators.pop();
 			}
 			else if(actualToken.equals(",")){
-				if (!operators.isEmpty() && (operators.peek().equals("*") || operators.peek().equals("+") || operators.peek().equals(","))){
+				while (!operators.isEmpty() && (operators.peek().equals("*") || operators.peek().equals("+") || operators.peek().equals(","))){
 					output.add(operators.pop());
 				}
 				operators.push(actualToken);
@@ -92,9 +99,10 @@ public class Postfix {
 	}
 	
 	public static void main(String[] args) throws Exception{
-		Postfix p = new Postfix("(padre,~)(.)+www(.)+com");
+		Postfix p = new Postfix("((padre,)(.)+www(.)+com),(www(.)+com)");
 		System.out.println(p);
 		AFNE a = new AFNE(p);
 		System.out.println(a);
+		System.out.println(a.accepted(".www.com"));
 	}
 }
