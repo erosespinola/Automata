@@ -251,6 +251,14 @@ public class AFNE {
 		}
 	}
 	
+	private ArrayList<Integer> getTransitions(int state, char symbol) {
+		return G.get(state)[convert(symbol)];
+	}
+	
+	private ArrayList<Integer> getTransitions(int state, int symbolIndex) {
+		return G.get(state)[symbolIndex];
+	}
+	
 	private HashSet<Integer> epsilonClosure(int state) {
 		HashSet<Integer> states = new HashSet<Integer>();
 		epsilonClosure(state, states);
@@ -265,6 +273,74 @@ public class AFNE {
 				epsilonClosure(child, states);
 			}
 		}
+	}
+	
+	public AFNE convertToAFD() throws FileNotFoundException {
+		HashSet<Integer> current = epsilonClosure(initialState),
+						 next = new HashSet<Integer>();
+		
+		AFNE result = new AFNE();
+		
+		HashMap<HashSet<Integer>, Integer> reverseIndex = new HashMap<>();
+		ArrayList<HashSet<Integer>> states = new ArrayList<>();
+		ArrayList<HashSet<Integer>[]> table = new ArrayList<>();
+		ArrayList<Boolean> afdFinals = new ArrayList<>();
+		
+		states.add(current);
+		reverseIndex.put(current, 0);
+		afdFinals.add(false);
+		for (int finalStates : current) {
+			if (finals.get(finalStates)) {
+				afdFinals.set(0, true);
+			}
+		}
+		
+		for (int i = 0; i <= states.size(); i++) {
+			table.add(new HashSet[NSYMBOLS]);
+			
+			for (int j = 0; j < NSYMBOLS; j++) {
+				if (j != convert(EPSILON)) {
+					table.get(i)[j] = new HashSet<>();
+					for (int state : current) {
+						next = new HashSet<Integer>();
+						
+						for (int transition : getTransitions(state, j)) {
+							next.addAll(epsilonClosure(transition));
+						}
+						
+						table.get(i)[j].addAll(next);
+						
+						if (!states.contains(next)) {
+							reverseIndex.put(next, states.size());
+							states.add(next);
+							afdFinals.add(false);
+							for (int finalStates : next) {
+								if (finals.get(finalStates)) {
+									afdFinals.set(states.size() - 1, true);
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		result.finals = afdFinals;
+		result.initialState = 0;
+		result.G = new ArrayList<ArrayList<Integer>[]>();
+		
+		for (int i = 0; i < states.size(); i++) {
+			result.G.add(new ArrayList[NSYMBOLS]);
+			for (int j = 0; j < NSYMBOLS; j++) {
+				result.G.get(i)[j] = new ArrayList<>();
+				result.G.get(i)[j].add(reverseIndex.get(table.get(i)[j]));
+			}
+			
+			result.G.get(i)[NSYMBOLS - 1] = new ArrayList<>();
+		}
+		
+		return result;
 	}
 
 	@Override

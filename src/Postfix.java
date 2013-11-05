@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Stack;
 
 public class Postfix {
@@ -99,10 +100,8 @@ public class Postfix {
 	}
 	
 	public static void main(String[] args) throws Exception{
-		Postfix p = new Postfix("((padre,)(.)+www(.)+com),(www(.)+com)");
-		System.out.println(p);
-		AFNE a = new AFNE(p);
-		System.out.println(a);
-		System.out.println(a.accepted(".www.com"));
+		//Postfix p = new Postfix("((padre,)(.)+www(.)+com)");
+		AFNE a = new AFNE(new Postfix("a*"));
+		System.out.println(a.convertToAFD());
 	}
 }
