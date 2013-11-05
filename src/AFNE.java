@@ -48,12 +48,10 @@ public class AFNE {
 		int current, previous;
 		char c;
 		initialState = 0;
-		previous = current = addState();
-		finals.add(false);
+		previous = current = addState(false);
 
 		for (int i = 0; i < word.length(); i++) {
-			current = addState();
-			finals.add(false);			
+			current = addState(false);		
 			c = word.charAt(i);
 
 			addTransition(previous, current, c);
@@ -84,16 +82,14 @@ public class AFNE {
 
 		mergeTables(operand);
 
-		int newInitialState = addState();
-		finals.add(false);
+		int newInitialState = addState(false);
 
 		addTransition(newInitialState, initialState, EPSILON);
 		addTransition(newInitialState, operand.initialState, EPSILON);
 		
 		initialState = newInitialState;
 
-		int newFinalState = addState();
-		finals.add(true);
+		int newFinalState = addState(true);
 
 		for (int i = 0; i < finals.size() - 1; i++) {
 			if (finals.get(i)) {
@@ -105,11 +101,8 @@ public class AFNE {
 	}
 
 	public AFNE kleenClosure() {
-		int newInitialState = addState();
-		int newFinalState = addState();
-
-		finals.add(false);
-		finals.add(true);
+		int newInitialState = addState(false);
+		int newFinalState = addState(true);
 
 		addTransition(newInitialState, newFinalState, EPSILON);
 		addTransition(newInitialState, initialState, EPSILON);
@@ -127,11 +120,8 @@ public class AFNE {
 	}
 
 	public AFNE positiveClosure() {
-		int newInitialState = addState();
-		int newFinalState = addState();
-
-		finals.add(false);
-		finals.add(true);
+		int newInitialState = addState(false);
+		int newFinalState = addState(true);
 
 		addTransition(newInitialState, initialState, EPSILON);
 
@@ -147,8 +137,9 @@ public class AFNE {
 		return this;
 	}
 
-	private int addState() {
+	private int addState(boolean finalState) {
 		ArrayList<Integer>[] row = new ArrayList[NSYMBOLS];
+		finals.add(finalState);
 
 		for (int i = 0; i < NSYMBOLS; i++) {
 			row[i] = new ArrayList<Integer>();
@@ -158,6 +149,10 @@ public class AFNE {
 		return G.size() - 1;
 	}
 
+	private void removeLastState() {
+		G.remove(G.size() - 1);
+	}
+	
 	private void evaluatePostfix(Postfix expression) throws Exception {
 		Stack<AFNE> operands = new Stack<AFNE>();
 		ArrayList<String> exp = expression.getPostfix();
@@ -373,7 +368,19 @@ public class AFNE {
 	}
 	
 	public boolean accepted(String input) {
-		return accepted(input, initialState, 0, "");
+		int newState = addState(false);
+		boolean result = false;
+		
+		addTransition(newState, newState, '.');
+		addTransition(newState, initialState, EPSILON);
+		
+		for (int i = 0; i < input.length(); i++) {
+			result |= accepted(input.substring(i), newState, 0, "");
+		}
+		
+		removeLastState();
+		
+		return result;
 	}
 
 	private boolean accepted(String input, int current, int i, String currentString) {

@@ -113,8 +113,8 @@ public class Postfix {
 //		System.out.println(p);
 		AFNE a = new AFNE(p);
 //		System.out.println(a);
-		System.out.println(a.accepted("padre....ff...www...dfghdgf....csomlol"));
+		System.out.println(a.accepted("padre.www...dfghdgf....com"));
 //		System.out.println(a.convertToAFD());
-		System.out.println(a.convertToAFD().accepted("lol"));
+		System.out.println(a.convertToAFD().accepted("xD lol"));
 	}
 }
