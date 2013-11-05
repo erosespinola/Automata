@@ -174,7 +174,6 @@ public class AFNE {
 				case "&":
 					op2 = operands.pop();
 					op1 = operands.pop();
-					System.out.println("LOOOOL");
 					op1.concatenate(op2);
 					break;
 				case "+":
@@ -194,13 +193,6 @@ public class AFNE {
 			else {
 				operands.push(new AFNE(s));
 			}
-		}
-
-		AFNE[] remaining = new AFNE[operands.size()];
-		operands.copyInto(remaining);
-		op1 = remaining[0];
-		for (int i = 1; i < remaining.length; i++) {
-			op1.concatenate(remaining[i]);
 		}
 
 		this.G = op1.G;
@@ -282,8 +274,7 @@ public class AFNE {
 	}
 	
 	public AFNE convertToAFD() throws FileNotFoundException {
-		HashSet<Integer> current = epsilonClosure(initialState),
-						 next = new HashSet<Integer>();
+		HashSet<Integer> next = epsilonClosure(initialState);
 		
 		AFNE result = new AFNE();
 		
@@ -292,40 +283,39 @@ public class AFNE {
 		ArrayList<HashSet<Integer>[]> table = new ArrayList<>();
 		ArrayList<Boolean> afdFinals = new ArrayList<>();
 		
-		states.add(current);
-		reverseIndex.put(current, 0);
+		states.add(next);
+		reverseIndex.put(next, 0);
 		afdFinals.add(false);
-		for (int finalStates : current) {
+		for (int finalStates : next) {
 			if (finals.get(finalStates)) {
 				afdFinals.set(0, true);
 			}
 		}
 		
-		for (int i = 0; i <= states.size(); i++) {
+		for (int i = 0; i < states.size(); i++) {
 			table.add(new HashSet[NSYMBOLS]);
 			
-			for (int j = 0; j < NSYMBOLS; j++) {
-				if (j != convert(EPSILON)) {
-					table.get(i)[j] = new HashSet<>();
-					for (int state : current) {
-						next = new HashSet<Integer>();
-						
-						for (int transition : getTransitions(state, j)) {
-							next.addAll(epsilonClosure(transition));
-						}
-						
-						table.get(i)[j].addAll(next);
-						
-						if (!states.contains(next)) {
-							reverseIndex.put(next, states.size());
-							states.add(next);
-							afdFinals.add(false);
-							for (int finalStates : next) {
-								if (finals.get(finalStates)) {
-									afdFinals.set(states.size() - 1, true);
-									break;
-								}
-							}
+			for (int j = 0; j < NSYMBOLS - 1; j++) {
+				table.get(i)[j] = new HashSet<>();
+				for (int state : states.get(i)) {
+					next = new HashSet<Integer>();
+					
+					for (int transition : getTransitions(state, j)) {
+						next.addAll(epsilonClosure(transition));
+					}
+					
+					table.get(i)[j].addAll(next);
+				}
+				next = table.get(i)[j];
+				
+				if (!states.contains(next)) {
+					reverseIndex.put(next, states.size());
+					states.add(next);
+					afdFinals.add(false);
+					for (int finalStates : next) {
+						if (finals.get(finalStates)) {
+							afdFinals.set(states.size() - 1, true);
+							break;
 						}
 					}
 				}
@@ -390,16 +380,16 @@ public class AFNE {
 		boolean a = false;
 
 		if (i == input.length()) {
-			if (finals.get(current)) {
-				System.out.println("Accepted: " + currentString);
-				return true;
+			for (int state : epsilonClosure(current)) {
+				if (finals.get(state)) {
+					System.out.println("Accepted: " + currentString);
+					return true;
+				}
 			}
-			else {
-				return false;
-			}
+			return false;
 		} else {
 			for (int state : epsilonClosure(current)) {
-				for (int child : G.get(state)[convert(input.charAt(i))]) {
+				for (int child : getTransitions(state, input.charAt(i))) {
 					a |= accepted(input, child, i + 1, currentString + input.charAt(i));
 				}
 			}

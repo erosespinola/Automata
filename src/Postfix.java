@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Stack;
 
 public class Postfix {
@@ -57,10 +56,6 @@ public class Postfix {
 			list.add(String.valueOf(token));
 		}
 		
-		for (int i=0; i<list.size(); i++){
-			System.out.print("[" + list.get(i)+ "]");
-		}	
-		System.out.println("");
 		return list;
 	}
 	
@@ -114,8 +109,12 @@ public class Postfix {
 	}
 	
 	public static void main(String[] args) throws Exception{
-		//Postfix p = new Postfix("((padre,)(.)+www(.)+com)");
-		AFNE a = new AFNE(new Postfix("a*"));
-		System.out.println(a.convertToAFD());
+		Postfix p = new Postfix("((padre,)(.)+www(.)+com),(lol)");
+//		System.out.println(p);
+		AFNE a = new AFNE(p);
+//		System.out.println(a);
+		System.out.println(a.accepted("padre....ff...www...dfghdgf....csomlol"));
+//		System.out.println(a.convertToAFD());
+		System.out.println(a.convertToAFD().accepted("lol"));
 	}
 }
