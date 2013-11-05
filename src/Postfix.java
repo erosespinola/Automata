@@ -23,6 +23,9 @@ public class Postfix {
 			else {
 				if(token.length()>0){
 					list.add(token);
+					if(actualChar == '(' && (actualChar != '+' || actualChar != '*')){
+						list.add("&");
+					}
 					token = "";	
 				}
 				if(actualChar == '('){
@@ -40,6 +43,12 @@ public class Postfix {
 					actualChar == ',' && entry.charAt(i+1) == ')') {
 					list.add(String.valueOf(AFNE.EPSILON));
 				}
+				
+				if(actualChar == ')' || actualChar == '+' || actualChar == '*'){
+					if(i<entry.length()-1 && entry.charAt(i+1)!=',' && (entry.charAt(i+1)!='*' || entry.charAt(i+1)!='+')){
+						list.add("&");
+					}
+				}
 			}
 		}
 		
@@ -47,6 +56,10 @@ public class Postfix {
 			list.add(String.valueOf(token));
 		}
 		
+		for (int i=0; i<list.size(); i++){
+			System.out.print("[" + list.get(i)+ "]");
+		}	
+		System.out.println("");
 		return list;
 	}
 	
@@ -67,8 +80,8 @@ public class Postfix {
 				}
 				operators.pop();
 			}
-			else if(actualToken.equals(",")){
-				while (!operators.isEmpty() && (operators.peek().equals("*") || operators.peek().equals("+") || operators.peek().equals(","))){
+			else if(actualToken.equals(",") || actualToken.equals("&")){
+				while (!operators.isEmpty() && (operators.peek().equals("*") || operators.peek().equals("+") || operators.peek().equals(",") || operators.peek().equals("&"))){
 					output.add(operators.pop());
 				}
 				operators.push(actualToken);
@@ -84,6 +97,7 @@ public class Postfix {
 	private boolean isOperator(String operator){
 		return operator.equals("(") 
 			|| operator.equals(",")
+			|| operator.equals("&")
 			|| operator.equals(")");
 	}
 	
