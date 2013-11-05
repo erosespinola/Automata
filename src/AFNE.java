@@ -39,7 +39,6 @@ public class AFNE {
 
 	public AFNE(Postfix expression) throws Exception {
 		this();
-
 		evaluatePostfix(expression);
 	}
 
@@ -172,6 +171,12 @@ public class AFNE {
 					op1 = operands.pop();
 					op1.union(op2);
 					break;
+				case "&":
+					op2 = operands.pop();
+					op1 = operands.pop();
+					System.out.println("LOOOOL");
+					op1.concatenate(op2);
+					break;
 				case "+":
 					op1 = operands.pop();
 					op1.positiveClosure();
@@ -227,7 +232,8 @@ public class AFNE {
 	private boolean isOperator(String operator){
 		return operator.equals("+") 
 				|| operator.equals("*")
-				|| operator.equals(",");
+				|| operator.equals(",")
+				|| operator.equals("&");
 	}
 
 	private void mergeTables(AFNE afne) {
