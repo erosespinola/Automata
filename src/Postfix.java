@@ -44,8 +44,8 @@ public class Postfix {
 				}
 				
 				if(actualChar == ')' || actualChar == '+' || actualChar == '*'){
-					if(i<entry.length()-1 && entry.charAt(i+1)!=',' && (entry.charAt(i+1)!='*' || entry.charAt(i+1)!='+')){
-						list.add("&");
+					if(i<entry.length()-1 && entry.charAt(i+1)!=',' && entry.charAt(i+1)!='*' && entry.charAt(i+1)!='+' && entry.charAt(i+1)!=')'){
+							list.add("&");
 					}
 				}
 			}
@@ -108,11 +108,11 @@ public class Postfix {
 	}
 	
 	public static void main(String[] args) throws Exception{
-		Postfix p = new Postfix("((padre,)(.)+www(.)+com),(lol\\n)");
+		Postfix p = new Postfix("5*Zxc5*,6*zXc6*");
 		System.out.println(p);
-//		AFNE a = new AFNE(p);
-//		System.out.println(a);
-//		System.out.println(a.accepted("padre.www...dfghdgf....com"));
+		AFNE a = new AFNE(p);
+		System.out.println(a);
+		System.out.println(a.accepted("5555zxc555555555"));
 //		System.out.println(a.convertToAFD());
 //		System.out.println(a.convertToAFD().accepted("xD lol"));
 	}
