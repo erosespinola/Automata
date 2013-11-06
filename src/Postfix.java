@@ -17,16 +17,27 @@ public class Postfix {
 		String token = "";
 		for(int i=0; i<entry.length(); i++){
 			char actualChar = entry.charAt(i);
-			if(Character.isAlphabetic(actualChar) || actualChar == '\\'){
+			if(Character.isAlphabetic(actualChar) || Character.isDigit(actualChar) || actualChar == '\\'){
 				token += String.valueOf(actualChar);
 			}
 			else {
 				if(token.length()>0){
-					list.add(token);
-					if(actualChar == '(' && (actualChar != '+' || actualChar != '*')){
+					if(token.length() > 2 && (actualChar == '*' || actualChar == '+')){
+						String newToken = String.valueOf(token.charAt(token.length()-1));
+						token = token.substring(0, token.length()-1);
+						list.add(token);
+						list.add("&");
+						list.add(newToken);
+						token = "";
+					} 
+					else {
+						list.add(token);
+						token = "";	
+						
+					}
+					if(actualChar == '('){
 						list.add("&");
 					}
-					token = "";	
 				}
 				if(actualChar == '('){
 					if(entry.charAt(i+1)=='.' && entry.charAt(i+2)==')'){
@@ -35,6 +46,7 @@ public class Postfix {
 						continue;
 					}
 				}
+				
 				list.add(String.valueOf(actualChar));
 				
 				if (actualChar == '(' && entry.charAt(i+1) == ',' ||
@@ -44,7 +56,8 @@ public class Postfix {
 				}
 				
 				if(actualChar == ')' || actualChar == '+' || actualChar == '*'){
-					if(i<entry.length()-1 && entry.charAt(i+1)!=',' && entry.charAt(i+1)!='*' && entry.charAt(i+1)!='+' && entry.charAt(i+1)!=')'){
+					if(i<entry.length()-1 && entry.charAt(i+1)!=',' && entry.charAt(i+1)!='*' 
+							&& entry.charAt(i+1)!='+' && entry.charAt(i+1)!=')'){
 							list.add("&");
 					}
 				}
@@ -75,8 +88,14 @@ public class Postfix {
 				}
 				operators.pop();
 			}
-			else if(actualToken.equals(",") || actualToken.equals("&")){
-				while (!operators.isEmpty() && (operators.peek().equals("*") || operators.peek().equals("+") || operators.peek().equals(",") || operators.peek().equals("&"))){
+			else if( actualToken.equals("&")){
+				while (!operators.isEmpty() && operators.peek().equals("&")){
+					output.add(operators.pop());
+				}
+				operators.push(actualToken);
+			}
+			else if( actualToken.equals(",")){
+				while (!operators.isEmpty() && (operators.peek().equals("&") || operators.peek().equals(","))){
 					output.add(operators.pop());
 				}
 				operators.push(actualToken);
@@ -110,9 +129,9 @@ public class Postfix {
 	public static void main(String[] args) throws Exception{
 		Postfix p = new Postfix("5*Zxc5*,6*zXc6*");
 		System.out.println(p);
-		AFNE a = new AFNE(p);
-		System.out.println(a);
-		System.out.println(a.accepted("5555zxc555555555"));
+//		AFNE a = new AFNE(p);
+//		System.out.println(a);
+//		System.out.println(a.accepted("5555zxc555555555"));
 //		System.out.println(a.convertToAFD());
 //		System.out.println(a.convertToAFD().accepted("xD lol"));
 	}
