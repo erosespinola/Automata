@@ -370,11 +370,13 @@ public class AFNE {
 	}
 	
 	public boolean accepted(String input) {
+		/*
 		int newState = addState(false);
 		boolean result = false;
 		
 		addTransition(newState, newState, '.');
 		addTransition(newState, initialState, EPSILON);
+		
 		
 		for (int i = 0; i < input.length(); i++) {
 			result |= accepted(input.substring(i), newState, 0, "");
@@ -383,6 +385,8 @@ public class AFNE {
 		removeLastState();
 		
 		return result;
+		*/
+		return accepted(input, initialState, 0, "");
 	}
 
 	private boolean accepted(String input, int current, int i, String currentString) {
