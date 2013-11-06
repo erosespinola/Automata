@@ -8,17 +8,17 @@ import java.util.Stack;
 
 public class AFNE {
 	private static int NSYMBOLS = 0;
+	public static final char EPSILON = '~';
 	private static boolean HASLOADEDDICT = false;
+	
 	private static HashMap<String, Integer> symbols;
 	private static HashMap<Integer, String> inverseIndex;
 	
-	public static final char EPSILON = '~';
-	
 	private ArrayList<ArrayList<Integer>[]> G;
 	private ArrayList<Boolean> finals;
-
 	private int initialState;
 
+	//AFNE functions
 	public AFNE() throws FileNotFoundException {
 		if (!HASLOADEDDICT) {
 			HASLOADEDDICT = true;
@@ -252,6 +252,7 @@ public class AFNE {
 		return G.get(state)[symbolIndex];
 	}
 	
+	//Convert to AFD
 	private HashSet<Integer> epsilonClosure(int state) {
 		HashSet<Integer> states = new HashSet<Integer>();
 		epsilonClosure(state, states);
@@ -261,7 +262,7 @@ public class AFNE {
 	private void epsilonClosure(int state, HashSet<Integer> states) {
 		states.add(state);
 		
-		for (int child : G.get(state)[convert(EPSILON)]) {
+		for (int child : getTransitions(state, EPSILON)) {
 			if (!states.contains(child)) {
 				epsilonClosure(child, states);
 			}
@@ -269,7 +270,7 @@ public class AFNE {
 	}
 	
 	public AFNE convertToAFD() throws FileNotFoundException {
-		HashSet<Integer> next = epsilonClosure(initialState);
+		HashSet<Integer> current = epsilonClosure(initialState);
 		
 		AFNE result = new AFNE();
 		
@@ -278,12 +279,13 @@ public class AFNE {
 		ArrayList<HashSet<Integer>[]> table = new ArrayList<>();
 		ArrayList<Boolean> afdFinals = new ArrayList<>();
 		
-		states.add(next);
-		reverseIndex.put(next, 0);
+		states.add(current);
+		reverseIndex.put(current, 0);
 		afdFinals.add(false);
-		for (int finalStates : next) {
+		for (int finalStates : current) {
 			if (finals.get(finalStates)) {
 				afdFinals.set(0, true);
+				break;
 			}
 		}
 		
@@ -293,21 +295,21 @@ public class AFNE {
 			for (int j = 0; j < NSYMBOLS - 1; j++) {
 				table.get(i)[j] = new HashSet<>();
 				for (int state : states.get(i)) {
-					next = new HashSet<Integer>();
+					current = new HashSet<Integer>();
 					
 					for (int transition : getTransitions(state, j)) {
-						next.addAll(epsilonClosure(transition));
+						current.addAll(epsilonClosure(transition));
 					}
 					
-					table.get(i)[j].addAll(next);
+					table.get(i)[j].addAll(current);
 				}
-				next = table.get(i)[j];
+				current = table.get(i)[j];
 				
-				if (!states.contains(next)) {
-					reverseIndex.put(next, states.size());
-					states.add(next);
+				if (!reverseIndex.containsKey(current)) {
+					reverseIndex.put(current, states.size());
+					states.add(current);
 					afdFinals.add(false);
-					for (int finalStates : next) {
+					for (int finalStates : current) {
 						if (finals.get(finalStates)) {
 							afdFinals.set(states.size() - 1, true);
 							break;
