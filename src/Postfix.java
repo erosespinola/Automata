@@ -134,16 +134,16 @@ public class Postfix {
 		//System.out.println(a.convertToAFD());
 		//System.out.println(a.accepted("DHL"));
 		
-		System.out.println(a.accepted(("DHL México" +
-				"Servicios nacionales Entrega Express Local" +
-				"Para servicios express nacionales dentro de su país DHL ofrece" +
-				"una variedad de envío opciones de entregas garantizadas con horario" +
-				"definido para el día siguiente o menos urgentes" +
-				"para fechas determinadas" +
-				"Soluciones avanzadas de envío" +
-				"Ofrecemos a las personas con cuenta DHL varias herramientas" +
-				"avanzadas de envío desde soluciones para PC fáciles de" +
-				"utilizar hasta soluciones integrales")));
+		System.out.println(a.accepted(("DHL México " +
+				"Servicios nacionales Entrega Express Local " +
+				"Para servicios express nacionales dentro de su país DHL ofrece " +
+				"una variedad de envío opciones de entregas garantizadas con horario " +
+				"definido para el día siguiente o menos urgentes " +
+				"para fechas determinadas " +
+				"Soluciones avanzadas de envío " +
+				"Ofrecemos a las personas con cuenta DHL varias herramientas " +
+				"avanzadas de envío desde soluciones para PC fáciles de " +
+				"utilizar hasta soluciones integrales ")));
 		
 		//System.out.println(a.convertToAFD());
 		//System.out.println(a.convertToAFD().accepted("xD lol"));
