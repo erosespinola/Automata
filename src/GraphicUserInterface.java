@@ -1,19 +1,25 @@
+
 import java.io.File;
-
 import javax.swing.JFileChooser;
+import java.io.FileReader;
+import java.util.Scanner;
 
-public class GUI extends javax.swing.JFrame {
-    Automata a;
+public class GraphicUserInterface extends javax.swing.JFrame {
     String path;
+    private javax.swing.JTextField automataString;
+    private javax.swing.JTextField fileLabel;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JButton openButton;
+    private javax.swing.JLabel stateLabel;
+    private javax.swing.JLabel stringLabel;
+    private javax.swing.JButton testButton;
+    private javax.swing.JLabel title;
     
-    public GUI() {
+    public GraphicUserInterface() {
         initComponents();
     }
 
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
         title = new javax.swing.JLabel();
         openButton = new javax.swing.JButton();
         automataString = new javax.swing.JTextField();
@@ -24,10 +30,10 @@ public class GUI extends javax.swing.JFrame {
         stateLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Automata Solver");
+        setTitle("Postfix Evaluator");
 
         title.setFont(new java.awt.Font("Ebrima", 0, 18)); // NOI18N
-        title.setText("Automata Solver 1.2.5.b.0");
+        title.setText("Postfix Evaluator 1.2.5.b.0");
 
         openButton.setText("Open file");
         openButton.setBorderPainted(false);
@@ -41,7 +47,7 @@ public class GUI extends javax.swing.JFrame {
         fileLabel.setText("No file chosen");
 
         stringLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        stringLabel.setText("String to test");
+        stringLabel.setText("Postfix to evaluate");
 
         testButton.setText("Test");
         testButton.addActionListener(new java.awt.event.ActionListener() {
@@ -57,7 +63,7 @@ public class GUI extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(96, Short.MAX_VALUE)
+                .addContainerGap(98, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(fileLabel)
                     .addComponent(automataString)
@@ -92,9 +98,9 @@ public class GUI extends javax.swing.JFrame {
         );
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>                        
 
-    private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
+    private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {                                           
         try {
             JFileChooser jfc = new JFileChooser();
             jfc.showOpenDialog(null);
@@ -106,23 +112,23 @@ public class GUI extends javax.swing.JFrame {
         catch(NullPointerException e) {
             stateLabel.setText("Choose a file");
         }
-    }//GEN-LAST:event_openButtonActionPerformed
+    }                                          
 
-    private void testButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testButtonActionPerformed
+    private void testButtonActionPerformed(java.awt.event.ActionEvent evt) {                                           
         try {
-            a = new Automata(path); 
-            boolean accepted = a.accepted(automataString.getText(),0,0);
-            if(accepted){
-                stateLabel.setText("The string was accepted");
-            } else {
-                stateLabel.setText("The string was not accepted");
+        	Postfix p = new Postfix("(en,En)((a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z)*(s,a))");
+        	AFNE a = new AFNE(p);
+        	a.convertToAFD();        	
+            Scanner s = new Scanner(new FileReader(path));
+            while (s.hasNextLine()) {
+                a.accepted(s.nextLine().trim());
             }
         }
         catch(Exception e) {
             e.printStackTrace();
-            stateLabel.setText("Error, try again ");
+            stateLabel.setText("Error, try again.");
         } 
-    }//GEN-LAST:event_testButtonActionPerformed
+    }                                          
 
     public static void main(String args[]) {
         try {
@@ -133,29 +139,20 @@ public class GUI extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GraphicUserInterface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GraphicUserInterface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GraphicUserInterface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GraphicUserInterface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new GUI().setVisible(true);
+                new GraphicUserInterface().setVisible(true);
             }
         });
     }
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField automataString;
-    private javax.swing.JTextField fileLabel;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JButton openButton;
-    private javax.swing.JLabel stateLabel;
-    private javax.swing.JLabel stringLabel;
-    private javax.swing.JButton testButton;
-    private javax.swing.JLabel title;
-    // End of variables declaration//GEN-END:variables
+    
 }
