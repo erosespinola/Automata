@@ -132,8 +132,8 @@ public class Postfix {
 		AFNE a = new AFNE(p);
 		System.out.println(a);
 		System.out.println(a.convertToAFD());
-		System.out.println(a.accepted("(DHL México, ~)"));
-		/*
+		//System.out.println(a.accepted("DHL"));
+		
 		System.out.println(a.accepted("DHL México\n\n" +
 				"Servicios nacionales Entrega Express Local\n" +
 				"Para servicios express nacionales dentro de su país DHL ofrece\n" +
@@ -144,7 +144,6 @@ public class Postfix {
 				"Ofrecemos a las personas con cuenta DHL varias herramientas\n" +
 				"avanzadas de envío desde soluciones para PC fáciles de\n" +
 				"utilizar hasta soluciones integrales"));
-		*/
 		//System.out.println(a.convertToAFD());
 		//System.out.println(a.convertToAFD().accepted("xD lol"));
 	}
