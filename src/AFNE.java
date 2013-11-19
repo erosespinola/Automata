@@ -399,8 +399,13 @@ public class AFNE {
 //		return a;
 //	}
 	
+<<<<<<< HEAD
 	public HashSet<String> accepted(String input) {
 		HashSet<String> result = new HashSet<String>();
+=======
+	public Set<String> accepted(String input) {
+		Set<String> result = new HashSet<String>();
+>>>>>>> 8b49bed410e1fb7ebf2688349c7ca5973c2d8924
 		
 		for (int i = 0; i < input.length(); i++) {
 			accepted(input.substring(i), initialState, 0, result);
@@ -409,11 +414,14 @@ public class AFNE {
 		return result;
 	}
 	
+<<<<<<< HEAD
 	private void accepted(String input, int current, int i, HashSet<String> result) {
+=======
+	private void accepted(String input, int current, int i, Set<String> result) {
+>>>>>>> 8b49bed410e1fb7ebf2688349c7ca5973c2d8924
 		for (int state : epsilonClosure(current)) {
 			if (finals.get(state)) {
 				result.add(input.substring(0, i));
-				return;
 			}
 		}
 		

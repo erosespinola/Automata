@@ -124,10 +124,10 @@ public class GraphicUserInterface extends javax.swing.JFrame {
         	PrintWriter printer = new PrintWriter(buffer);
         	Postfix p = new Postfix("(en,En)((a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z)*(s,a))");
         	AFNE a = new AFNE(p);
-        	a.convertToAFD();
+        	//a.convertToAFD();
             Scanner s = new Scanner(new FileReader(path));
             while (s.hasNextLine()) {
-                a.accepted(s.nextLine().trim());
+                printer.println(a.accepted(s.nextLine().replaceAll("[\r\n]", " ")));
             }
             printer.close();
             buffer.close();
