@@ -125,5 +125,5 @@ public class Postfix {
 		
 		return s;
 	}
-	
+
 }

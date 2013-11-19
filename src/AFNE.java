@@ -373,36 +373,30 @@ public class AFNE {
 	public boolean accepted(String input, PrintWriter printer) {
 		int newState = addState(false);
 		boolean result = false;
-		addTransition(newState, newState, '.');
-		addTransition(newState, initialState, EPSILON);
 		
 		for (int i = 0; i < input.length(); i++) {
-			result |= accepted(input.substring(i), newState, 0, "", printer);
+
+			result |= accepted(input.substring(i), initialState, 0, printer);
 		}
 		
-		removeLastState();
 		return result;
 	}
 
-	private boolean accepted(String input, int current, int i, String currentString, PrintWriter printer) {
+	private boolean accepted(String input, int current, int i, PrintWriter printer) {
 		boolean a = false;
 
-		if (i == input.length()) {
-			for (int state : epsilonClosure(current)) {
-				if (finals.get(state)) {
-					printer.write("Accepted: " + currentString + "\n");
-					return true;
-				}
+		for (int state : epsilonClosure(current)) {
+			if (finals.get(state)) {
+				System.out.println("Accepted: " + input.substring(0, i));
+				return true;
 			}
-			return false;
-		} 
-		else {
-			for (int state : epsilonClosure(current)) {
-				for (int child : getTransitions(state, input.charAt(i))) {
-					a |= accepted(input, child, i + 1, currentString + input.charAt(i), printer);
-				}
-			}
-			return a;
 		}
+		
+		for (int state : epsilonClosure(current)) {
+			for (int child : getTransitions(state, input.charAt(i))) {
+				a |= accepted(input, child, i + 1, printer);
+			}
+		}
+		return a;
 	}
 }
