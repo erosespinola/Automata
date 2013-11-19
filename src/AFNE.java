@@ -208,7 +208,7 @@ public class AFNE {
 	private void addTransition(int source, int destination, char symbol) {
 		if (symbol == '.') {
 			for (String current : symbols.keySet()) {
-				if (!current.equals(String.valueOf(EPSILON))) {
+				if (!current.equals(String.valueOf(EPSILON)) && !current.equals("¬")) {
 					G.get(source)[convert(current)].add(destination);
 				}
 			}
@@ -410,15 +410,21 @@ public class AFNE {
 	}
 	
 	private void accepted(String input, int current, int i, Set<String> result) {
+		if (i > input.length()) {
+			return;
+		}
+		
 		for (int state : epsilonClosure(current)) {
 			if (finals.get(state)) {
 				result.add(input.substring(0, i));
 			}
 		}
 		
-		for (int state : epsilonClosure(current)) {
-			for (int child : getTransitions(state, input.charAt(i))) {
-				accepted(input, child, i + 1, result);
+		if (i < input.length()) {
+			for (int state : epsilonClosure(current)) {
+				for (int child : getTransitions(state, input.charAt(i))) {
+					accepted(input, child, i + 1, result);
+				}
 			}
 		}
 	}
