@@ -370,26 +370,22 @@ public class AFNE {
 	}
 	
 	public boolean accepted(String input) {
-		int newState = addState(false);
 		boolean result = false;
-		addTransition(newState, newState, '.');
-		addTransition(newState, initialState, EPSILON);
 		
 		for (int i = 0; i < input.length(); i++) {
-			result |= accepted(input.substring(i), newState, 0, "");
+			result |= accepted(input.substring(i), initialState, 0);
 		}
 		
-		removeLastState();
 		return result;
 	}
 
-	private boolean accepted(String input, int current, int i, String currentString) {
+	private boolean accepted(String input, int current, int i) {
 		boolean a = false;
 
 		if (i == input.length()) {
 			for (int state : epsilonClosure(current)) {
 				if (finals.get(state)) {
-					System.out.println("Accepted: " + currentString);
+					System.out.println("Accepted: " + input);
 					return true;
 				}
 			}
@@ -397,7 +393,7 @@ public class AFNE {
 		} else {
 			for (int state : epsilonClosure(current)) {
 				for (int child : getTransitions(state, input.charAt(i))) {
-					a |= accepted(input, child, i + 1, currentString + input.charAt(i));
+					a |= accepted(input, child, i + 1);
 				}
 			}
 			return a;
