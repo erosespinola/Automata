@@ -409,7 +409,6 @@ public class AFNE {
 		return result;
 	}
 	
-
 	private void accepted(String input, int current, int i, Set<String> result) {
 		for (int state : epsilonClosure(current)) {
 			if (finals.get(state)) {
