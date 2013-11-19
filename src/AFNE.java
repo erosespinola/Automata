@@ -399,19 +399,17 @@ public class AFNE {
 //		return a;
 //	}
 	
-	public Set<String> accepted(String input, PrintWriter printer) {
+	public HashSet<String> accepted(String input) {
 		HashSet<String> result = new HashSet<String>();
 		
 		for (int i = 0; i < input.length(); i++) {
-			accepted(input.substring(i), initialState, 0, result, printer);
+			accepted(input.substring(i), initialState, 0, result);
 		}
 		
 		return result;
 	}
 	
-	private void accepted(String input, int current, int i, HashSet<String> result, PrintWriter printer) {
-		boolean a = false;
-
+	private void accepted(String input, int current, int i, HashSet<String> result) {
 		for (int state : epsilonClosure(current)) {
 			if (finals.get(state)) {
 				result.add(input.substring(0, i));
@@ -421,7 +419,7 @@ public class AFNE {
 		
 		for (int state : epsilonClosure(current)) {
 			for (int child : getTransitions(state, input.charAt(i))) {
-				accepted(input, child, i + 1, result, printer);
+				accepted(input, child, i + 1, result);
 			}
 		}
 	}

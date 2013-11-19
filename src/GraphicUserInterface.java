@@ -127,7 +127,7 @@ public class GraphicUserInterface extends javax.swing.JFrame {
         	a.convertToAFD();
             Scanner s = new Scanner(new FileReader(path));
             while (s.hasNextLine()) {
-                a.accepted(s.nextLine().trim(), printer);
+                a.accepted(s.nextLine().trim());
             }
             printer.close();
             buffer.close();
