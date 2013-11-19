@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.Stack;
 
 public class AFNE {
@@ -369,31 +370,58 @@ public class AFNE {
 		return output;
 	}
 	
-	public boolean accepted(String input) {
-		boolean result = false;
+//	public boolean accepted(String input) {
+//		boolean result = false;
+//		
+//		for (int i = 0; i < input.length(); i++) {
+//			result |= accepted(input.substring(i), initialState, 0);
+//		}
+//		
+//		return result;
+//	}
+//
+//	private boolean accepted(String input, int current, int i) {
+//		boolean a = false;
+//
+//		for (int state : epsilonClosure(current)) {
+//			if (finals.get(state)) {
+//				return true;
+//			}
+//		}
+//		
+//		for (int state : epsilonClosure(current)) {
+//			for (int child : getTransitions(state, input.charAt(i))) {
+//				a |= accepted(input, child, i + 1);
+//			}
+//		}
+//		
+//		return a;
+//	}
+	
+	public Set<String> accepted(String input) {
+		HashSet<String> result = new HashSet<String>();
 		
 		for (int i = 0; i < input.length(); i++) {
-			result |= accepted(input.substring(i), initialState, 0);
+			accepted(input.substring(i), initialState, 0, result);
 		}
 		
 		return result;
 	}
-
-	private boolean accepted(String input, int current, int i) {
+	
+	private void accepted(String input, int current, int i, HashSet<String> result) {
 		boolean a = false;
 
 		for (int state : epsilonClosure(current)) {
 			if (finals.get(state)) {
-				System.out.println("Accepted: " + input.substring(0, i));
-				return true;
+				result.add(input.substring(0, i));
+				return;
 			}
 		}
 		
 		for (int state : epsilonClosure(current)) {
 			for (int child : getTransitions(state, input.charAt(i))) {
-				a |= accepted(input, child, i + 1);
+				accepted(input, child, i + 1, result);
 			}
 		}
-		return a;
 	}
 }
