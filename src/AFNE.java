@@ -1,5 +1,6 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -398,17 +399,17 @@ public class AFNE {
 //		return a;
 //	}
 	
-	public Set<String> accepted(String input) {
+	public Set<String> accepted(String input, PrintWriter printer) {
 		HashSet<String> result = new HashSet<String>();
 		
 		for (int i = 0; i < input.length(); i++) {
-			accepted(input.substring(i), initialState, 0, result);
+			accepted(input.substring(i), initialState, 0, result, printer);
 		}
 		
 		return result;
 	}
 	
-	private void accepted(String input, int current, int i, HashSet<String> result) {
+	private void accepted(String input, int current, int i, HashSet<String> result, PrintWriter printer) {
 		boolean a = false;
 
 		for (int state : epsilonClosure(current)) {
@@ -420,7 +421,7 @@ public class AFNE {
 		
 		for (int state : epsilonClosure(current)) {
 			for (int child : getTransitions(state, input.charAt(i))) {
-				accepted(input, child, i + 1, result);
+				accepted(input, child, i + 1, result, printer);
 			}
 		}
 	}
