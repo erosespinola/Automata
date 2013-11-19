@@ -1,5 +1,6 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -369,35 +370,36 @@ public class AFNE {
 		return output;
 	}
 	
-	public boolean accepted(String input) {
+	public boolean accepted(String input, PrintWriter printer) {
 		int newState = addState(false);
 		boolean result = false;
 		addTransition(newState, newState, '.');
 		addTransition(newState, initialState, EPSILON);
 		
 		for (int i = 0; i < input.length(); i++) {
-			result |= accepted(input.substring(i), newState, 0, "");
+			result |= accepted(input.substring(i), newState, 0, "", printer);
 		}
 		
 		removeLastState();
 		return result;
 	}
 
-	private boolean accepted(String input, int current, int i, String currentString) {
+	private boolean accepted(String input, int current, int i, String currentString, PrintWriter printer) {
 		boolean a = false;
 
 		if (i == input.length()) {
 			for (int state : epsilonClosure(current)) {
 				if (finals.get(state)) {
-					System.out.println("Accepted: " + currentString);
+					printer.write("Accepted: " + currentString + "\n");
 					return true;
 				}
 			}
 			return false;
-		} else {
+		} 
+		else {
 			for (int state : epsilonClosure(current)) {
 				for (int child : getTransitions(state, input.charAt(i))) {
-					a |= accepted(input, child, i + 1, currentString + input.charAt(i));
+					a |= accepted(input, child, i + 1, currentString + input.charAt(i), printer);
 				}
 			}
 			return a;

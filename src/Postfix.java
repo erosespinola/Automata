@@ -126,25 +126,4 @@ public class Postfix {
 		return s;
 	}
 	
-	public static void main(String[] args) throws Exception{
-		Postfix p = new Postfix("(en,En)((a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z)*(s,a))");
-		System.out.println(p);
-		AFNE a = new AFNE(p);
-		System.out.println(a);
-		System.out.println(a.convertToAFD());
-		//System.out.println(a.accepted("DHL"));
-		
-		System.out.println(a.accepted("DHL México\n\n" +
-				"Servicios nacionales Entrega Express Local\n" +
-				"Para servicios express nacionales dentro de su país DHL ofrece\n" +
-				"una variedad de envío opciones de entregas garantizadas con horario\n" +
-				"definido para el día siguiente o menos urgentes\n" +
-				"para fechas determinadas\n\n" +
-				"Soluciones avanzadas de envío\n" +
-				"Ofrecemos a las personas con cuenta DHL varias herramientas\n" +
-				"avanzadas de envío desde soluciones para PC fáciles de\n" +
-				"utilizar hasta soluciones integrales"));
-		//System.out.println(a.convertToAFD());
-		//System.out.println(a.convertToAFD().accepted("xD lol"));
-	}
 }

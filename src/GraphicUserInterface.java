@@ -1,5 +1,9 @@
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+
 import javax.swing.JFileChooser;
 import java.io.FileReader;
 import java.util.Scanner;
@@ -116,13 +120,17 @@ public class GraphicUserInterface extends javax.swing.JFrame {
 
     private void testButtonActionPerformed(java.awt.event.ActionEvent evt) {                                           
         try {
+        	BufferedWriter buffer = new BufferedWriter(new FileWriter(new File("result.txt")));
+        	PrintWriter printer = new PrintWriter(buffer);
         	Postfix p = new Postfix("(en,En)((a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z)*(s,a))");
         	AFNE a = new AFNE(p);
-        	a.convertToAFD();        	
+        	a.convertToAFD();
             Scanner s = new Scanner(new FileReader(path));
             while (s.hasNextLine()) {
-                a.accepted(s.nextLine().trim());
+                a.accepted(s.nextLine().trim(), printer);
             }
+            printer.close();
+            buffer.close();
         }
         catch(Exception e) {
             e.printStackTrace();
