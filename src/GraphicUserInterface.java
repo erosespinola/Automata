@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 
 import javax.swing.JFileChooser;
 import java.io.FileReader;
+import java.util.Iterator;
 import java.util.Scanner;
 
 public class GraphicUserInterface extends javax.swing.JFrame {
@@ -123,11 +124,15 @@ public class GraphicUserInterface extends javax.swing.JFrame {
         	BufferedWriter buffer = new BufferedWriter(new FileWriter(new File("result.txt")));
         	PrintWriter printer = new PrintWriter(buffer);
         	Postfix p = new Postfix(automataString.getText());
+        	System.out.println();
         	AFNE a = new AFNE(p);
-        	//a.convertToAFD();
             Scanner s = new Scanner(new FileReader(path));
             while (s.hasNextLine()) {
-                printer.println(a.accepted(s.nextLine().replaceAll("[\r\n]", "¬")));
+            	String line = s.nextLine().replaceAll("[\r\n]", " ").concat("¬");
+                Iterator it = a.accepted(line).iterator();
+                while(it.hasNext()){
+                	printer.println(it.next().toString().replaceAll("¬", ""));
+                }
             }
             printer.close();
             buffer.close();

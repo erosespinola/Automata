@@ -150,10 +150,6 @@ public class AFNE {
 
 		return G.size() - 1;
 	}
-
-	private void removeLastState() {
-		G.remove(G.size() - 1);
-	}
 	
 	private void evaluatePostfix(Postfix expression) throws Exception {
 		Stack<AFNE> operands = new Stack<AFNE>();
@@ -370,34 +366,6 @@ public class AFNE {
 
 		return output;
 	}
-	
-//	public boolean accepted(String input) {
-//		boolean result = false;
-//		
-//		for (int i = 0; i < input.length(); i++) {
-//			result |= accepted(input.substring(i), initialState, 0);
-//		}
-//		
-//		return result;
-//	}
-//
-//	private boolean accepted(String input, int current, int i) {
-//		boolean a = false;
-//
-//		for (int state : epsilonClosure(current)) {
-//			if (finals.get(state)) {
-//				return true;
-//			}
-//		}
-//		
-//		for (int state : epsilonClosure(current)) {
-//			for (int child : getTransitions(state, input.charAt(i))) {
-//				a |= accepted(input, child, i + 1);
-//			}
-//		}
-//		
-//		return a;
-//	}
 	
 	public Set<String> accepted(String input) {
 		Set<String> result = new HashSet<String>();

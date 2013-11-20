@@ -17,8 +17,12 @@ public class Postfix {
 		String token = "";
 		for(int i=0; i<entry.length(); i++){
 			char actualChar = entry.charAt(i);
-			if(Character.isAlphabetic(actualChar) || Character.isDigit(actualChar) || actualChar == '\\'){
+			if(Character.isAlphabetic(actualChar) || Character.isDigit(actualChar)){
 				token += String.valueOf(actualChar);
+			}
+			else if(actualChar == '\\'){
+				list.add("¬");
+				i++;
 			}
 			else {
 				if(token.length()>0){
@@ -67,7 +71,6 @@ public class Postfix {
 		if (token != "") {
 			list.add(String.valueOf(token));
 		}
-		
 		return list;
 	}
 	

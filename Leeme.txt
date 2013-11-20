@@ -1,0 +1,40 @@
+
+
+Evaluador de expresiones regulares
+
+- Expresion Regular:
+
+Una expresión regular (ER), a menudo llamada también regex, es una secuencia de caracteres que forma un patrón de búsqueda, principalmente utilizada para la búsqueda de patrones de cadenas de caracteres u operaciones de sustituciones. Por ejemplo, el grupo formado por las cadenas Handel, Händel y Haendel se describe mediante el patrón "H(a,ä,ae)ndel".
+
+Para utilizar el software:
+
+1- Seleccione el archivo que contiene el texto donde se buscará el patrón deseado.
+
+2- Construya la ER, esto tomando en cuenta los siguientes carácteres especiales:
+	- Comodín cualquier carácter: El punto entre paréntesis
+	  "(.)" indica que puede ir cualquier carácter del alfabeto.
+	- Cerraduro positiva: "+" Encuentra una o más apariciones del carácter (u operación)
+	  que precede al "+".
+	- Cerradura de Kleen: "*" Encuentra cero o más apariciones del carácter (u operación)
+	  que precede al "*".
+	- Unión: "," Se usa en medio de dos expresiones y esto
+	  significa que buscará una aparición de cualquiera de las
+	  expresiones presentes.
+	- Cadena Vacía: "~" (epsilon) Simboliza que puede existir la ausencia de
+	  carácteres.
+	- Paréntesis: "()" Sirven para dar prioridad en la ER.
+
+	Ejemplos de patrones de búsqueda (expresiones regulares) válidas:
+	- hscripts(.)+
+	- (padre,e)(.)+www(.)+com
+	- (padre (.)+www(.)+com),(www(.)+com)
+	- Expresi(ó,o)n(.)(Regular,General)
+
+3- Introduzca la ER que se deberá de cumplir.
+
+4- Revise los resultados en el archivo de texto de salida llamado "result.txt".
+
+Este software fue hecho por:
+- Eros Espínola González
+- Mauricio David Zaragoza Ibarra
+- Eduardo Regalado Pelayo
